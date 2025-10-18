@@ -153,37 +153,6 @@ The snippet uses Cloudflare's Workers runtime and:
 - Sets it in the configured header name
 - Forwards the modified request to the origin
 
-## Origin Server Integration
-
-Your origin server will receive the PEM certificate in the configured header (default: `X-Forwarded-Client-Cert`). The certificate is base64 encoded, so you'll need to decode it:
-
-### Example: Node.js/Express
-
-```javascript
-app.use((req, res, next) => {
-  const pemCert = req.headers['x-forwarded-client-cert'];
-  if (pemCert) {
-    const decodedPem = Buffer.from(pemCert, 'base64').toString('utf-8');
-    console.log('Client Certificate:', decodedPem);
-    // Process the certificate...
-  }
-  next();
-});
-```
-
-### Example: Python/Flask
-
-```python
-import base64
-
-@app.before_request
-def process_client_cert():
-    pem_cert = request.headers.get('X-Forwarded-Client-Cert')
-    if pem_cert:
-        decoded_pem = base64.b64decode(pem_cert).decode('utf-8')
-        print(f'Client Certificate: {decoded_pem}')
-        # Process the certificate...
-```
 
 ## Validation
 
@@ -215,18 +184,7 @@ terraform destroy
 - Check origin server logs for the custom header
 - Ensure the header name matches your configuration
 
-### Terraform errors
-- Run `terraform fmt` to fix formatting issues
-- Verify your API token has the required permissions
-- Check that the zone ID is correct
 
-## Security Considerations
-
-- ⚠️ **Never commit `terraform.tfvars`** - it contains sensitive API tokens
-- ⚠️ **Use environment variables** for CI/CD pipelines
-- ⚠️ **Rotate API tokens** regularly
-- ⚠️ **Limit API token permissions** to only what's needed
-- ⚠️ **Validate certificates** at your origin server
 
 ## Additional Resources
 
